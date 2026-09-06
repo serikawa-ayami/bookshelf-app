@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Actions\Fortify;
+
+use App\Models\User;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Laravel\Fortify\Contracts\CreatesNewUsers;
+
+class CreateNewUser implements CreatesNewUsers
+{
+    /**
+     * Validate and create a newly registered user.
+     *
+     * @param array<string, string> $input
+     *
+     * @throws ValidationException
+     */
+    public function create(array $input): User
+    {
+        Validator::make(
+            $input,
+            [
+                'name' => ['required', 'string', 'max:255'],
+                'email' => [
+                    'required',
+                    'string',
+                    'email',
+                    'max:255',
+                    Rule::unique(User::class),
+                ],
+                'password' => ['required', 'string', 'confirmed'],
+            ],
+            [
+                'name.required' => '名前は必須です。',
+                'name.string' => '名前は文字列で入力してください。',
+                'name.max' => '名前は255文字以内で入力してください。',
+                'email.required' => 'メールアドレスは必須です。',
+                'email.string' => 'メールアドレスは文字列で入力してください。',
+                'email.email' => 'メールアドレスの形式が正しくありません。',
+                'email.max' => 'メールアドレスは255文字以内で入力してください。',
+                'email.unique' => 'このメールアドレスは使用できません。',
+                'password.required' => 'パスワードは必須です。',
+                'password.string' => 'パスワードは文字列で入力してください。',
+                'password.confirmed' => 'パスワードが一致しません。',
+            ]
+        )->validate();
+
+        return User::create([
+            'name' => $input['name'],
+            'email' => $input['email'],
+            'password' => $input['password'],
+        ]);
+    }
+}
