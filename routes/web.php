@@ -3,6 +3,7 @@
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\GenreController;
+use App\Http\Controllers\RankingController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReviewLikeController;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [BookController::class, 'index'])->name('books.index');
 Route::get('/books', [BookController::class, 'index'])->name('books.list');
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
+// ランキング_一覧（ゲスト利用可能）
+Route::get('/ranking', [RankingController::class, 'index'])->name('ranking.index');
 
 // ログイン必須
 Route::middleware('auth')->group(function () {
