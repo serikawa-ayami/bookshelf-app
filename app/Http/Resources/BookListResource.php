@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BookResource extends JsonResource
+class BookListResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -32,10 +32,6 @@ class BookResource extends JsonResource
             'review_count' => $this->when(
                 isset($this->reviews_count),
                 $this->reviews_count
-            ),
-
-            'reviews' => ReviewResource::collection(
-                $this->whenLoaded('reviews')
             ),
         ];
     }

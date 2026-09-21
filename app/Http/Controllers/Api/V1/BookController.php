@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\IndexBookRequest;
 use App\Http\Requests\Api\V1\StoreBookRequest;
 use App\Http\Requests\Api\V1\UpdateBookRequest;
-use App\Http\Resources\BookResource;
+use App\Http\Resources\BookDetailResource;
+use App\Http\Resources\BookListResource;
 use App\Models\Book;
 
 class BookController extends Controller
@@ -44,7 +45,7 @@ class BookController extends Controller
             ->latest()
             ->paginate($perPage);
 
-        return BookResource::collection($books);
+        return BookListResource::collection($books);
     }
 
     // AP02: 書籍詳細
@@ -55,7 +56,7 @@ class BookController extends Controller
             'reviews.user',
         ]);
 
-        return new BookResource($book);
+        return new BookDetailResource($book);
     }
 
     // AP03: 書籍登録
@@ -74,7 +75,7 @@ class BookController extends Controller
             ->loadAvg('reviews', 'rating')
             ->loadCount('reviews');
 
-        return (new BookResource($book))
+        return (new BookListResource($book))
             ->response()
             ->setStatusCode(201);
     }
@@ -95,7 +96,7 @@ class BookController extends Controller
             ->loadAvg('reviews', 'rating')
             ->loadCount('reviews');
 
-        return new BookResource($book);
+        return new BookListResource($book);
     }
 
     // AP05: 書籍削除
