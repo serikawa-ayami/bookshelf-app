@@ -27,13 +27,6 @@ class BookDetailResource extends JsonResource
                 $this->whenLoaded('genres')
             ),
 
-            'average_rating' => $this->reviews_avg_rating,
-
-            'review_count' => $this->when(
-                isset($this->reviews_count),
-                $this->reviews_count
-            ),
-
             'reviews' => ReviewResource::collection(
                 $this->whenLoaded('reviews')
             ),
