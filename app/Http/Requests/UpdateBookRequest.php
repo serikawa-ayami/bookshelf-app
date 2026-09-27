@@ -26,6 +26,7 @@ class UpdateBookRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
             'isbn' => [
+                'bail',
                 'required',
                 'string',
                 'digits:13',
