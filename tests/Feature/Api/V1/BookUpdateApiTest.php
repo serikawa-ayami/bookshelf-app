@@ -158,6 +158,10 @@ class BookUpdateApiTest extends TestCase
                 'message',
                 'errors',
             ])
+            ->assertJsonPath(
+                'message',
+                '入力内容に誤りがあります。'
+            )
             ->assertJsonValidationErrors([
                 'title',
                 'author',
@@ -197,6 +201,8 @@ class BookUpdateApiTest extends TestCase
             'errors.genres.0',
             'ジャンルは必須です。'
         );
+
+
 
         // 書籍情報が更新されていないことを確認する
         $this->assertDatabaseHas('books', [

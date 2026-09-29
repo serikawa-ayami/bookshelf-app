@@ -277,9 +277,8 @@ class BookIndexApiTest extends TestCase
     }
 
     /**
-     * No.58
-     * 不正なkeyword・genre_id・page・per_pageを指定した場合に、
-     * 422と日本語のバリデーションエラー形式が返ること。
+     * No.58：不正なクエリパラメータを指定した場合に
+     * バリデーションエラーを返すこと。
      */
     public function test_index_returns_validation_errors_for_invalid_parameters(): void
     {
@@ -296,20 +295,20 @@ class BookIndexApiTest extends TestCase
             );
 
             $response->assertStatus(422)
-                ->assertJsonStructure([
+                ->assertJsonPath(
                     'message',
+                    '入力内容に誤りがあります。'
+                )
+                ->assertJsonStructure([
                     'errors' => [$key],
                 ]);
 
-            $errorMessage = json_encode(
-                $response->json(),
-                JSON_UNESCAPED_UNICODE
-            );
-
-            $this->assertMatchesRegularExpression(
-                '/[ぁ-んァ-ヶ一-龯]/u',
-                $errorMessage
-            );
+            if ($key === 'page') {
+                $response->assertJsonPath(
+                    'errors.page.0',
+                    'ページ番号は1以上の整数で入力してください。'
+                );
+            }
         }
     }
 }

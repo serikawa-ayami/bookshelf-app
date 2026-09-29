@@ -82,7 +82,8 @@ class BookStoreApiTest extends TestCase
 
     /**
      * No.62
-     * 不正な入力を送信した場合に422と日本語のバリデーションエラー形式が返り、
+     * 不正な入力を送信した場合に422と
+     * 項目ごとのバリデーションエラーメッセージが返り、
      * 書籍が登録されないこと。
      */
     public function test_store_returns_validation_errors_for_invalid_input(): void
@@ -103,20 +104,38 @@ class BookStoreApiTest extends TestCase
         $response = $this->postJson('/api/v1/books', $payload);
 
         $response->assertStatus(422)
-            ->assertJsonStructure([
+            ->assertJsonPath(
                 'message',
-                'errors',
-            ]);
-
-        $errorMessage = json_encode(
-            $response->json(),
-            JSON_UNESCAPED_UNICODE
-        );
-
-        $this->assertMatchesRegularExpression(
-            '/[ぁ-んァ-ヶ一-龯]/u',
-            $errorMessage
-        );
+                '入力内容に誤りがあります。'
+            )
+            ->assertJsonPath(
+                'errors.title.0',
+                'タイトルは必須です。'
+            )
+            ->assertJsonPath(
+                'errors.author.0',
+                '著者は必須です。'
+            )
+            ->assertJsonPath(
+                'errors.isbn.0',
+                'ISBNは13桁の数字で入力してください。'
+            )
+            ->assertJsonPath(
+                'errors.published_date.0',
+                '出版日は正しい日付を入力してください。'
+            )
+            ->assertJsonPath(
+                'errors.description.0',
+                '説明は1000文字以内で入力してください。'
+            )
+            ->assertJsonPath(
+                'errors.image_url.0',
+                '画像URLの形式が正しくありません。'
+            )
+            ->assertJsonPath(
+                'errors.genres.0',
+                'ジャンルは必須です。'
+            );
 
         $this->assertDatabaseCount('books', 0);
     }
