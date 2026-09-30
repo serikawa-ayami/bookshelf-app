@@ -301,7 +301,7 @@ class AuthorizationTest extends TestCase
 
         $response->assertOk()
             ->assertDontSee(route('books.edit', $book))
-            ->assertDontSee('action="' . route('books.destroy', $book) . '"');
+            ->assertDontSee('action="'.route('books.destroy', $book).'"');
     }
 
     /**
@@ -343,6 +343,6 @@ class AuthorizationTest extends TestCase
 
         $response->assertOk()
             ->assertDontSee(route('reviews.edit', $review))
-            ->assertDontSee('action="' . route('reviews.destroy', $review) . '"');
+            ->assertDontSee('action="'.route('reviews.destroy', $review).'"');
     }
 }

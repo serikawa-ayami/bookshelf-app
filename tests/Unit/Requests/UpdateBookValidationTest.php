@@ -17,17 +17,17 @@ class UpdateBookValidationTest extends TestCase
     private function validate(Book $book, array $data): bool
     {
         $request = UpdateBookRequest::create(
-            '/books/' . $book->id,
+            '/books/'.$book->id,
             'PUT',
             $data
         );
 
         $request->setRouteResolver(function () use ($book) {
-            return new class ($book) {
+            return new class($book)
+            {
                 public function __construct(
-                private Book $book
-                ) {
-                }
+                    private Book $book
+                ) {}
 
                 public function parameter($key = null, $default = null)
                 {
@@ -53,7 +53,7 @@ class UpdateBookValidationTest extends TestCase
     ): Book {
         $user = User::create([
             'name' => 'テストユーザー',
-            'email' => uniqid('test-', true) . '@example.com',
+            'email' => uniqid('test-', true).'@example.com',
             'password' => 'password',
         ]);
 

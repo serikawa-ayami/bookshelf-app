@@ -22,7 +22,7 @@ return new class extends Migration
                 ->constrained('genres')
                 ->restrictOnDelete();
 
-            $table->unique(['book_id','genre_id']);
+            $table->unique(['book_id', 'genre_id']);
 
             $table->timestamps();
         });

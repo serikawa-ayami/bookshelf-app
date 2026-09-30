@@ -7,8 +7,8 @@ use App\Models\Review;
 use App\Models\ReviewLike;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ReviewLikeTest extends TestCase
@@ -17,7 +17,7 @@ class ReviewLikeTest extends TestCase
 
     public function test_user_relationship_is_belongs_to(): void
     {
-        $reviewLike = new ReviewLike();
+        $reviewLike = new ReviewLike;
 
         $this->assertInstanceOf(
             BelongsTo::class,
@@ -27,7 +27,7 @@ class ReviewLikeTest extends TestCase
 
     public function test_review_relationship_is_belongs_to(): void
     {
-        $reviewLike = new ReviewLike();
+        $reviewLike = new ReviewLike;
 
         $this->assertInstanceOf(
             BelongsTo::class,
@@ -37,7 +37,7 @@ class ReviewLikeTest extends TestCase
 
     public function test_fillable_attributes_are_defined(): void
     {
-        $reviewLike = new ReviewLike();
+        $reviewLike = new ReviewLike;
 
         $this->assertSame(
             [

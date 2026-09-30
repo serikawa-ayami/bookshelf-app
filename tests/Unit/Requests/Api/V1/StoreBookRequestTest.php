@@ -35,8 +35,8 @@ class StoreBookRequestTest extends TestCase
 
         $validator = Validator::make(
             $data,
-            (new StoreBookRequest())->rules(),
-            (new StoreBookRequest())->messages()
+            (new StoreBookRequest)->rules(),
+            (new StoreBookRequest)->messages()
         );
 
         $this->assertTrue($validator->passes());
@@ -49,8 +49,8 @@ class StoreBookRequestTest extends TestCase
     {
         $validator = Validator::make(
             [],
-            (new StoreBookRequest())->rules(),
-            (new StoreBookRequest())->messages()
+            (new StoreBookRequest)->rules(),
+            (new StoreBookRequest)->messages()
         );
 
         foreach ([
@@ -223,8 +223,8 @@ class StoreBookRequestTest extends TestCase
     {
         $validator = Validator::make(
             $data,
-            (new StoreBookRequest())->rules(),
-            (new StoreBookRequest())->messages()
+            (new StoreBookRequest)->rules(),
+            (new StoreBookRequest)->messages()
         );
 
         $this->assertTrue($validator->errors()->has($field));

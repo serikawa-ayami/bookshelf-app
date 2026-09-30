@@ -18,7 +18,7 @@ class AuthValidationTest extends TestCase
     {
         parent::setUp();
 
-        $this->action = new CreateNewUser();
+        $this->action = new CreateNewUser;
     }
 
     public function test_valid_registration_input_can_create_user(): void

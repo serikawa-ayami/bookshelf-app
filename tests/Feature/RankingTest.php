@@ -51,7 +51,7 @@ class RankingTest extends TestCase
     /**
      * テスト用の書籍とレビューを作成する。
      *
-     * @param array<int, int> $ratings
+     * @param  array<int, int>  $ratings
      */
     private function createBookWithReviews(
         string $title,
@@ -103,7 +103,7 @@ class RankingTest extends TestCase
                     'id',
                     $reviewedBook->id
                 )
-                    && !$rankedBooks->contains(
+                    && ! $rankedBooks->contains(
                         'id',
                         $unreviewedBook->id
                     )

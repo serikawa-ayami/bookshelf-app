@@ -14,7 +14,7 @@ class GenreValidationTest extends TestCase
 
     private function validate(array $data): bool
     {
-        $request = new StoreGenreRequest();
+        $request = new StoreGenreRequest;
 
         return Validator::make(
             $data,

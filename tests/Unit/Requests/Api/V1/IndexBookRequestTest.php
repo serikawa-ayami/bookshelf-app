@@ -20,7 +20,7 @@ class IndexBookRequestTest extends TestCase
      */
     private function validate(array $data): bool
     {
-        $request = new IndexBookRequest();
+        $request = new IndexBookRequest;
 
         return Validator::make(
             $data,

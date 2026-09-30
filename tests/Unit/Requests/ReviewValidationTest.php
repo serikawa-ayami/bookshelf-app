@@ -11,7 +11,7 @@ class ReviewValidationTest extends TestCase
 {
     private function validateStore(array $data): bool
     {
-        $request = new StoreReviewRequest();
+        $request = new StoreReviewRequest;
 
         return Validator::make(
             $data,
@@ -22,7 +22,7 @@ class ReviewValidationTest extends TestCase
 
     private function validateUpdate(array $data): bool
     {
-        $request = new UpdateReviewRequest();
+        $request = new UpdateReviewRequest;
 
         return Validator::make(
             $data,

@@ -11,7 +11,7 @@ class UserTest extends TestCase
 {
     public function test_books_relationship_is_has_many(): void
     {
-        $user = new User();
+        $user = new User;
 
         $this->assertInstanceOf(
             HasMany::class,
@@ -21,7 +21,7 @@ class UserTest extends TestCase
 
     public function test_reviews_relationship_is_has_many(): void
     {
-        $user = new User();
+        $user = new User;
 
         $this->assertInstanceOf(
             HasMany::class,
@@ -31,7 +31,7 @@ class UserTest extends TestCase
 
     public function test_favorites_relationship_is_has_many(): void
     {
-        $user = new User();
+        $user = new User;
 
         $this->assertInstanceOf(
             HasMany::class,
@@ -41,7 +41,7 @@ class UserTest extends TestCase
 
     public function test_favorite_books_relationship_is_belongs_to_many(): void
     {
-        $user = new User();
+        $user = new User;
 
         $this->assertInstanceOf(
             BelongsToMany::class,
@@ -51,7 +51,7 @@ class UserTest extends TestCase
 
     public function test_review_likes_relationship_is_has_many(): void
     {
-        $user = new User();
+        $user = new User;
 
         $this->assertInstanceOf(
             HasMany::class,
@@ -61,7 +61,7 @@ class UserTest extends TestCase
 
     public function test_liked_reviews_relationship_is_belongs_to_many(): void
     {
-        $user = new User();
+        $user = new User;
 
         $this->assertInstanceOf(
             BelongsToMany::class,
@@ -71,7 +71,7 @@ class UserTest extends TestCase
 
     public function test_fillable_attributes_are_defined(): void
     {
-        $user = new User();
+        $user = new User;
 
         $this->assertSame(
             ['name', 'email', 'password'],
@@ -81,7 +81,7 @@ class UserTest extends TestCase
 
     public function test_hidden_attributes_are_defined(): void
     {
-        $user = new User();
+        $user = new User;
 
         $this->assertSame(
             ['password', 'remember_token'],
@@ -91,7 +91,7 @@ class UserTest extends TestCase
 
     public function test_email_verified_at_cast_is_datetime(): void
     {
-        $user = new User();
+        $user = new User;
 
         $this->assertSame(
             'datetime',
@@ -101,7 +101,7 @@ class UserTest extends TestCase
 
     public function test_password_cast_is_hashed(): void
     {
-        $user = new User();
+        $user = new User;
 
         $this->assertSame(
             'hashed',
