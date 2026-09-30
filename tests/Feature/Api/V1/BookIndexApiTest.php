@@ -283,13 +283,57 @@ class BookIndexApiTest extends TestCase
     public function test_index_returns_validation_errors_for_invalid_parameters(): void
     {
         $invalidParameters = [
-            'keyword' => ['keyword' => ['不正な値']],
-            'genre_id' => ['genre_id' => 'invalid'],
-            'page' => ['page' => 0],
-            'per_page' => ['per_page' => 101],
+            [
+                'parameter' => ['keyword' => ['不正な値']],
+                'key' => 'keyword',
+                'message' => 'キーワードは文字列で入力してください。',
+            ],
+            [
+                'parameter' => ['keyword' => str_repeat('あ', 256)],
+                'key' => 'keyword',
+                'message' => 'キーワードは255文字以内で入力してください。',
+            ],
+            [
+                'parameter' => ['genre_id' => 'invalid'],
+                'key' => 'genre_id',
+                'message' => 'ジャンルIDは整数で指定してください。',
+            ],
+            [
+                'parameter' => ['genre_id' => 999999],
+                'key' => 'genre_id',
+                'message' => '指定したジャンルが存在しません。',
+            ],
+            [
+                'parameter' => ['page' => 0],
+                'key' => 'page',
+                'message' => 'ページ番号は1以上の整数で入力してください。',
+            ],
+            [
+                'parameter' => ['page' => 'abc'],
+                'key' => 'page',
+                'message' => 'ページ番号は整数で指定してください。',
+            ],
+            [
+                'parameter' => ['per_page' => 101],
+                'key' => 'per_page',
+                'message' => '1ページあたりの件数は100件以内で指定してください。',
+            ],
+            [
+                'parameter' => ['per_page' => 'abc'],
+                'key' => 'per_page',
+                'message' => '1ページあたりの件数は整数で指定してください。',
+            ],
+            [
+                'parameter' => ['per_page' => 0],
+                'key' => 'per_page',
+                'message' => '1ページ以上の件数を指定してください。',
+            ],
         ];
 
-        foreach ($invalidParameters as $key => $parameter) {
+        foreach ($invalidParameters as $invalidParameter) {
+            $key = $invalidParameter['key'];
+            $parameter = $invalidParameter['parameter'];
+
             $response = $this->getJson(
                 '/api/v1/books?'.http_build_query($parameter)
             );
@@ -301,14 +345,11 @@ class BookIndexApiTest extends TestCase
                 )
                 ->assertJsonStructure([
                     'errors' => [$key],
-                ]);
-
-            if ($key === 'page') {
-                $response->assertJsonPath(
-                    'errors.page.0',
-                    'ページ番号は1以上の整数で入力してください。'
+                ])
+                ->assertJsonPath(
+                    'errors.'.$key.'.0',
+                    $invalidParameter['message']
                 );
-            }
         }
     }
 }

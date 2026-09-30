@@ -88,54 +88,355 @@ class BookStoreApiTest extends TestCase
     public function test_store_returns_validation_errors_for_invalid_input(): void
     {
         $user = User::factory()->create();
+        $existingUser = User::factory()->create();
+        $genre = Genre::create(['name' => '小説']);
+        $existingIsbn = '9784000000001';
 
-        $payload = [
-            'user_id' => $user->id,
-            'title' => '',
-            'author' => '',
-            'isbn' => 'invalid',
-            'published_date' => 'invalid',
-            'description' => str_repeat('あ', 1001),
-            'image_url' => 'invalid-url',
-            'genres' => [],
+        $this->postJson('/api/v1/books', [
+            'user_id' => $existingUser->id,
+            'title' => '既存書籍',
+            'author' => '既存著者',
+            'isbn' => $existingIsbn,
+            'published_date' => '2026-01-01',
+            'description' => null,
+            'image_url' => null,
+            'genres' => [$genre->id],
+        ])->assertStatus(201);
+
+        $invalidInputs = [
+            [
+                'payload' => [
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'user_id',
+                'message' => '登録者IDは必須です。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => 'invalid',
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'user_id',
+                'message' => '登録者IDは整数で指定してください。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => 999999,
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'user_id',
+                'message' => '指定した登録者が存在しません。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'title',
+                'message' => 'タイトルは必須です。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'author',
+                'message' => '著者は必須です。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => ['不正な値'],
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'title',
+                'message' => 'タイトルは文字列で入力してください。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => str_repeat('あ', 256),
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'title',
+                'message' => 'タイトルは255文字以内で入力してください。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'author',
+                'message' => '著者は必須です。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'author' => ['不正な値'],
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'author',
+                'message' => '著者は文字列で入力してください。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'author' => str_repeat('あ', 256),
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'author',
+                'message' => '著者は255文字以内で入力してください。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'isbn',
+                'message' => 'ISBNは必須です。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'isbn' => '123456789012',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'isbn',
+                'message' => 'ISBNは13桁の数字で入力してください。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'isbn' => $existingIsbn,
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'isbn',
+                'message' => 'このISBNはすでに登録されています。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'published_date',
+                'message' => '出版日は必須です。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'published_date' => 'invalid-date',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'published_date',
+                'message' => '出版日は正しい日付を入力してください。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => ['不正な値'],
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'description',
+                'message' => '説明は文字列で入力してください。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => str_repeat('あ', 1001),
+                    'image_url' => null,
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'description',
+                'message' => '説明は1000文字以内で入力してください。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => 'https://example.com/'.str_repeat('a', 240),
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'image_url',
+                'message' => '画像URLは255文字以内で入力してください。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => 'invalid-url',
+                    'genres' => [$genre->id],
+                ],
+                'key' => 'image_url',
+                'message' => '画像URLの形式が正しくありません。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                ],
+                'key' => 'genres',
+                'message' => 'ジャンルは必須です。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => 'invalid',
+                ],
+                'key' => 'genres',
+                'message' => 'ジャンルの形式が正しくありません。',
+            ],
+            [
+                'payload' => [
+                    'user_id' => $user->id,
+                    'title' => 'テスト書籍',
+                    'author' => 'テスト著者',
+                    'isbn' => '9784000000002',
+                    'published_date' => '2026-01-01',
+                    'description' => null,
+                    'image_url' => null,
+                    'genres' => [999999],
+                ],
+                'key' => 'genres.0',
+                'message' => '選択したジャンルが存在しません。',
+            ],
         ];
 
-        $response = $this->postJson('/api/v1/books', $payload);
-
-        $response->assertStatus(422)
-            ->assertJsonPath(
-                'message',
-                '入力内容に誤りがあります。'
-            )
-            ->assertJsonPath(
-                'errors.title.0',
-                'タイトルは必須です。'
-            )
-            ->assertJsonPath(
-                'errors.author.0',
-                '著者は必須です。'
-            )
-            ->assertJsonPath(
-                'errors.isbn.0',
-                'ISBNは13桁の数字で入力してください。'
-            )
-            ->assertJsonPath(
-                'errors.published_date.0',
-                '出版日は正しい日付を入力してください。'
-            )
-            ->assertJsonPath(
-                'errors.description.0',
-                '説明は1000文字以内で入力してください。'
-            )
-            ->assertJsonPath(
-                'errors.image_url.0',
-                '画像URLの形式が正しくありません。'
-            )
-            ->assertJsonPath(
-                'errors.genres.0',
-                'ジャンルは必須です。'
+        foreach ($invalidInputs as $invalidInput) {
+            $response = $this->postJson(
+                '/api/v1/books',
+                $invalidInput['payload']
             );
 
-        $this->assertDatabaseCount('books', 0);
+            $response->assertStatus(422)
+                ->assertJsonPath(
+                    'message',
+                    '入力内容に誤りがあります。'
+                );
+
+            if ($invalidInput['key'] === 'genres.0') {
+                $response->assertJsonPath(
+                    'errors',
+                    [
+                        'genres.0' => [$invalidInput['message']],
+                    ]
+                );
+            } else {
+                $response->assertJsonStructure([
+                    'errors' => [$invalidInput['key']],
+                ])
+                    ->assertJsonPath(
+                        'errors.'.$invalidInput['key'].'.0',
+                        $invalidInput['message']
+                    );
+            }
+        }
+
+        $this->assertDatabaseCount('books', 1);
     }
 }

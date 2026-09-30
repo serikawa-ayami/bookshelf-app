@@ -142,65 +142,143 @@ class BookUpdateApiTest extends TestCase
         $book->genres()->attach($genre->id);
         $anotherBook->genres()->attach($genre->id);
 
-        $response = $this->putJson("/api/v1/books/{$book->id}", [
-            'title' => '',
-            'author' => '',
-            'isbn' => $anotherBook->isbn,
-            'published_date' => '不正な日付',
-            'description' => str_repeat('あ', 1001),
-            'image_url' => null,
-            'genres' => [],
-        ]);
+        $invalidInputs = [
+            [
+                'key' => 'title',
+                'value' => '',
+                'message' => 'タイトルは必須です。',
+            ],
+            [
+                'key' => 'title',
+                'value' => 123,
+                'message' => 'タイトルは文字列で入力してください。',
+            ],
+            [
+                'key' => 'title',
+                'value' => str_repeat('あ', 256),
+                'message' => 'タイトルは255文字以内で入力してください。',
+            ],
+            [
+                'key' => 'author',
+                'value' => '',
+                'message' => '著者は必須です。',
+            ],
+            [
+                'key' => 'author',
+                'value' => 123,
+                'message' => '著者は文字列で入力してください。',
+            ],
+            [
+                'key' => 'author',
+                'value' => str_repeat('あ', 256),
+                'message' => '著者は255文字以内で入力してください。',
+            ],
+            [
+                'key' => 'isbn',
+                'value' => '',
+                'message' => 'ISBNは必須です。',
+            ],
+            [
+                'key' => 'isbn',
+                'value' => '123456789012',
+                'message' => 'ISBNは13桁の数字で入力してください。',
+            ],
+            [
+                'key' => 'isbn',
+                'value' => $anotherBook->isbn,
+                'message' => 'このISBNはすでに登録されています。',
+            ],
+            [
+                'key' => 'published_date',
+                'value' => '',
+                'message' => '出版日は必須です。',
+            ],
+            [
+                'key' => 'published_date',
+                'value' => '不正な日付',
+                'message' => '出版日は正しい日付を入力してください。',
+            ],
+            [
+                'key' => 'description',
+                'value' => 123,
+                'message' => '説明は文字列で入力してください。',
+            ],
+            [
+                'key' => 'description',
+                'value' => str_repeat('あ', 1001),
+                'message' => '説明は1000文字以内で入力してください。',
+            ],
+            [
+                'key' => 'image_url',
+                'value' => 'not-url',
+                'message' => '画像URLの形式が正しくありません。',
+            ],
+            [
+                'key' => 'image_url',
+                'value' => 'https://example.com/'.str_repeat('a', 240),
+                'message' => '画像URLは255文字以内で入力してください。',
+            ],
+            [
+                'key' => 'genres',
+                'value' => '',
+                'message' => 'ジャンルは必須です。',
+            ],
+            [
+                'key' => 'genres',
+                'value' => 'invalid',
+                'message' => 'ジャンルの形式が正しくありません。',
+            ],
+            [
+                'key' => 'genres.0',
+                'value' => [999999],
+                'message' => '選択したジャンルが存在しません。',
+            ],
+        ];
 
-        // 422とmessage・errorsを含むレスポンス形式を確認する
-        $response->assertUnprocessable()
-            ->assertJsonStructure([
-                'message',
-                'errors',
-            ])
-            ->assertJsonPath(
-                'message',
-                '入力内容に誤りがあります。'
-            )
-            ->assertJsonValidationErrors([
-                'title',
-                'author',
-                'isbn',
-                'published_date',
-                'description',
-                'genres',
-            ]);
+        foreach ($invalidInputs as $invalidInput) {
+            $payload = [
+                'title' => '更新後のタイトル',
+                'author' => '更新後の著者',
+                'isbn' => '2222222222222',
+                'published_date' => '2026-02-01',
+                'description' => '更新後の説明',
+                'image_url' => null,
+                'genres' => [$genre->id],
+            ];
 
-        // 要件シート「設計一覧」の書籍編集のメッセージと完全一致することを確認する
-        $response->assertJsonPath(
-            'errors.title.0',
-            'タイトルは必須です。'
-        );
+            if ($invalidInput['key'] === 'genres.0') {
+                $payload['genres'] = $invalidInput['value'];
+            } else {
+                $payload[$invalidInput['key']] = $invalidInput['value'];
+            }
 
-        $response->assertJsonPath(
-            'errors.author.0',
-            '著者は必須です。'
-        );
+            $response = $this->putJson(
+                "/api/v1/books/{$book->id}",
+                $payload
+            );
 
-        $response->assertJsonPath(
-            'errors.isbn.0',
-            'このISBNはすでに登録されています。'
-        );
+            $response->assertStatus(422)
+                ->assertJsonPath(
+                    'message',
+                    '入力内容に誤りがあります。'
+                );
 
-        $response->assertJsonPath(
-            'errors.published_date.0',
-            '出版日は正しい日付を入力してください。'
-        );
-
-        $response->assertJsonPath(
-            'errors.description.0',
-            '説明は1000文字以内で入力してください。'
-        );
-
-        $response->assertJsonPath(
-            'errors.genres.0',
-            'ジャンルは必須です。'
-        );
+            if ($invalidInput['key'] === 'genres.0') {
+                $response->assertJsonPath(
+                    'errors',
+                    [
+                        'genres.0' => [$invalidInput['message']],
+                    ]
+                );
+            } else {
+                $response->assertJsonStructure([
+                    'errors' => [$invalidInput['key']],
+                ])->assertJsonPath(
+                    'errors.'.$invalidInput['key'].'.0',
+                    $invalidInput['message']
+                );
+            }
+        }
 
         // 書籍情報が更新されていないことを確認する
         $this->assertDatabaseHas('books', [
@@ -285,6 +363,63 @@ class BookUpdateApiTest extends TestCase
         $this->assertDatabaseHas('book_genre', [
             'book_id' => $existingBook->id,
             'genre_id' => $genre->id,
+        ]);
+    }
+
+    /**
+     * No.66
+     * 自身のISBNを指定してPUT /api/v1/books/{book}を実行した場合に
+     * 200 OKが返り、ISBNの重複エラーにならず、
+     * その他の書籍情報が更新されること。
+     */
+    public function test_update_allows_same_isbn(): void
+    {
+        $user = User::factory()->create();
+
+        $genre = Genre::create([
+            'name' => 'テストジャンル',
+        ]);
+
+        $book = Book::create([
+            'user_id' => $user->id,
+            'title' => '更新前のタイトル',
+            'author' => '更新前の著者',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-01-01',
+            'description' => '更新前の説明',
+            'image_url' => null,
+        ]);
+
+        $book->genres()->attach($genre->id);
+
+        $response = $this->putJson("/api/v1/books/{$book->id}", [
+            'title' => '更新後のタイトル',
+            'author' => '更新後の著者',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-09-30',
+            'description' => '更新後の説明',
+            'image_url' => null,
+            'genres' => [$genre->id],
+        ]);
+
+        // 自身のISBNを指定しても200 OKで更新できることを確認する
+        $response->assertOk()
+            ->assertJsonPath('data.id', $book->id)
+            ->assertJsonPath('data.title', '更新後のタイトル')
+            ->assertJsonPath('data.author', '更新後の著者')
+            ->assertJsonPath('data.isbn', '1234567890123')
+            ->assertJsonPath('data.published_date', '2026-09-30')
+            ->assertJsonPath('data.description', '更新後の説明');
+
+        // ISBNを維持したまま書籍情報が更新されていることを確認する
+        $this->assertDatabaseHas('books', [
+            'id' => $book->id,
+            'user_id' => $user->id,
+            'title' => '更新後のタイトル',
+            'author' => '更新後の著者',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-09-30',
+            'description' => '更新後の説明',
         ]);
     }
 }
