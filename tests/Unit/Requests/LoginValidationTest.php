@@ -10,7 +10,7 @@ class LoginValidationTest extends TestCase
 {
     private function validate(array $data): bool
     {
-        $request = new LoginRequest();
+        $request = new LoginRequest;
 
         return Validator::make(
             $data,

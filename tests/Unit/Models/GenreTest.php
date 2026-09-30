@@ -10,7 +10,7 @@ class GenreTest extends TestCase
 {
     public function test_books_relationship_is_belongs_to_many(): void
     {
-        $genre = new Genre();
+        $genre = new Genre;
 
         $this->assertInstanceOf(
             BelongsToMany::class,
@@ -20,7 +20,7 @@ class GenreTest extends TestCase
 
     public function test_fillable_attributes_are_defined(): void
     {
-        $genre = new Genre();
+        $genre = new Genre;
 
         $this->assertSame(
             ['name'],

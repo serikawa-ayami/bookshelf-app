@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Api\V1;
 
-use App\Models\Book;
 use App\Models\Genre;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

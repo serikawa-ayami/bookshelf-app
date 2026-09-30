@@ -6,8 +6,8 @@ use App\Models\Book;
 use App\Models\Favorite;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class FavoriteTest extends TestCase
@@ -16,7 +16,7 @@ class FavoriteTest extends TestCase
 
     public function test_user_relationship_is_belongs_to(): void
     {
-        $favorite = new Favorite();
+        $favorite = new Favorite;
 
         $this->assertInstanceOf(
             BelongsTo::class,
@@ -26,7 +26,7 @@ class FavoriteTest extends TestCase
 
     public function test_book_relationship_is_belongs_to(): void
     {
-        $favorite = new Favorite();
+        $favorite = new Favorite;
 
         $this->assertInstanceOf(
             BelongsTo::class,
@@ -36,7 +36,7 @@ class FavoriteTest extends TestCase
 
     public function test_fillable_attributes_are_defined(): void
     {
-        $favorite = new Favorite();
+        $favorite = new Favorite;
 
         $this->assertSame(
             [

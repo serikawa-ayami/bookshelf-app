@@ -207,7 +207,7 @@ class UpdateBookRequestTest extends TestCase
     private function validData(): array
     {
         $genre = Genre::create([
-            'name' => '小説' . uniqid(),
+            'name' => '小説'.uniqid(),
         ]);
 
         return [
@@ -226,12 +226,13 @@ class UpdateBookRequestTest extends TestCase
      */
     private function makeValidator(array $data, Book $book)
     {
-        $request = new UpdateBookRequest();
+        $request = new UpdateBookRequest;
 
         $request->setRouteResolver(function () use ($book) {
-            return new class ($book) {
+            return new class($book)
+            {
                 public function __construct(
-                private Book $book
+                    private Book $book
                 ) {}
 
                 public function parameter($key)

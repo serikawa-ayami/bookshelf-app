@@ -3,6 +3,7 @@
 namespace Tests\Unit\Requests;
 
 use App\Http\Requests\StoreBookRequest;
+use App\Models\Book;
 use App\Models\Genre;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,7 +16,7 @@ class BookValidationTest extends TestCase
 
     private function validate(array $data): bool
     {
-        $request = new StoreBookRequest();
+        $request = new StoreBookRequest;
 
         return Validator::make(
             $data,
@@ -136,7 +137,7 @@ class BookValidationTest extends TestCase
             'name' => '既存ジャンル',
         ]);
 
-        \App\Models\Book::create([
+        Book::create([
             'user_id' => $user->id,
             'title' => '既存書籍',
             'author' => '既存著者',

@@ -140,7 +140,7 @@ class BookIndexApiTest extends TestCase
         $book1->genres()->attach($genre1->id);
         $book2->genres()->attach($genre2->id);
 
-        $response = $this->getJson('/api/v1/books?genre_id=' . $genre1->id);
+        $response = $this->getJson('/api/v1/books?genre_id='.$genre1->id);
 
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data')
@@ -163,7 +163,7 @@ class BookIndexApiTest extends TestCase
         $book2->genres()->attach($genre2->id);
 
         $response = $this->getJson(
-            '/api/v1/books?keyword=Laravel&genre_id=' . $genre1->id
+            '/api/v1/books?keyword=Laravel&genre_id='.$genre1->id
         );
 
         $response->assertStatus(200)
@@ -291,7 +291,7 @@ class BookIndexApiTest extends TestCase
 
         foreach ($invalidParameters as $key => $parameter) {
             $response = $this->getJson(
-                '/api/v1/books?' . http_build_query($parameter)
+                '/api/v1/books?'.http_build_query($parameter)
             );
 
             $response->assertStatus(422)

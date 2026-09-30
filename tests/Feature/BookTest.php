@@ -3,7 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Book;
+use App\Models\Favorite;
 use App\Models\Genre;
+use App\Models\Review;
+use App\Models\ReviewLike;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -84,7 +87,7 @@ class BookTest extends TestCase
 
         $book->genres()->attach($genre->id);
 
-        $review = \App\Models\Review::create([
+        $review = Review::create([
             'user_id' => $reviewUser->id,
             'book_id' => $book->id,
             'rating' => 5,
@@ -97,7 +100,7 @@ class BookTest extends TestCase
             'password' => 'password',
         ]);
 
-        \App\Models\ReviewLike::create([
+        ReviewLike::create([
             'user_id' => $likeUser->id,
             'review_id' => $review->id,
         ]);
@@ -682,7 +685,7 @@ class BookTest extends TestCase
             'isbn' => '9784000000268',
             'published_date' => '2026-09-21',
             'description' => '更新後の説明です。',
-            'image_url' => 'https://example.com/' . str_repeat('a', 240),
+            'image_url' => 'https://example.com/'.str_repeat('a', 240),
             'genres' => [$genre->id],
         ]);
 
@@ -1549,7 +1552,7 @@ class BookTest extends TestCase
 
         $this->actingAs($user);
 
-        $longImageUrl = 'https://example.com/' . str_repeat('a', 250);
+        $longImageUrl = 'https://example.com/'.str_repeat('a', 250);
 
         $response = $this->post(route('books.store'), [
             'title' => '画像URL文字数テスト書籍',
@@ -2026,7 +2029,6 @@ class BookTest extends TestCase
         $response->assertNotFound();
     }
 
-
     /**
      * No.26
      * 書籍一覧を表示し、1ページに10件の書籍が表示され、
@@ -2381,19 +2383,19 @@ class BookTest extends TestCase
 
         $book->genres()->attach($genre->id);
 
-        $review = \App\Models\Review::create([
+        $review = Review::create([
             'user_id' => $reviewUser->id,
             'book_id' => $book->id,
             'rating' => 4,
             'comment' => '削除対象書籍のレビューです。',
         ]);
 
-        \App\Models\ReviewLike::create([
+        ReviewLike::create([
             'user_id' => $likeUser->id,
             'review_id' => $review->id,
         ]);
 
-        \App\Models\Favorite::create([
+        Favorite::create([
             'user_id' => $reviewUser->id,
             'book_id' => $book->id,
         ]);
@@ -2409,5 +2411,4 @@ class BookTest extends TestCase
         $this->assertDatabaseMissing('favorites', ['book_id' => $book->id]);
         $this->assertDatabaseMissing('review_likes', ['review_id' => $review->id]);
     }
-
 }

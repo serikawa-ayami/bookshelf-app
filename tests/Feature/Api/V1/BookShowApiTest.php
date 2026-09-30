@@ -39,7 +39,7 @@ class BookShowApiTest extends TestCase
             'comment' => '面白い書籍でした。',
         ]);
 
-        $response = $this->getJson('/api/v1/books/' . $book->id);
+        $response = $this->getJson('/api/v1/books/'.$book->id);
 
         $response->assertStatus(200)
             ->assertJsonStructure([

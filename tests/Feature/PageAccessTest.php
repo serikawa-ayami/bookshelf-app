@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\Book;
+use App\Models\Favorite;
 use App\Models\Genre;
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -43,7 +45,7 @@ class PageAccessTest extends TestCase
 
         $book->genres()->attach($genre->id);
 
-        $response = $this->get('/books/' . $book->id);
+        $response = $this->get('/books/'.$book->id);
 
         $response->assertStatus(200);
     }
@@ -82,7 +84,7 @@ class PageAccessTest extends TestCase
             'name' => 'テストジャンル',
         ]);
 
-        $response = $this->get('/genres/' . $genre->id);
+        $response = $this->get('/genres/'.$genre->id);
 
         $response->assertRedirect('/login');
     }
@@ -100,7 +102,7 @@ class PageAccessTest extends TestCase
             'name' => 'テストジャンル',
         ]);
 
-        $response = $this->get('/genres/' . $genre->id . '/edit');
+        $response = $this->get('/genres/'.$genre->id.'/edit');
 
         $response->assertRedirect('/login');
     }
@@ -111,7 +113,7 @@ class PageAccessTest extends TestCase
             'name' => 'テストジャンル',
         ]);
 
-        $response = $this->delete('/genres/' . $genre->id);
+        $response = $this->delete('/genres/'.$genre->id);
 
         $response->assertRedirect('/login');
     }
@@ -134,7 +136,7 @@ class PageAccessTest extends TestCase
             'image_url' => null,
         ]);
 
-        $response = $this->get('/books/' . $book->id . '/edit');
+        $response = $this->get('/books/'.$book->id.'/edit');
 
         $response->assertRedirect('/login');
     }
@@ -157,7 +159,7 @@ class PageAccessTest extends TestCase
             'image_url' => null,
         ]);
 
-        $response = $this->delete('/books/' . $book->id);
+        $response = $this->delete('/books/'.$book->id);
 
         $response->assertRedirect('/login');
     }
@@ -180,14 +182,14 @@ class PageAccessTest extends TestCase
             'image_url' => null,
         ]);
 
-        $review = \App\Models\Review::create([
+        $review = Review::create([
             'user_id' => $user->id,
             'book_id' => $book->id,
             'rating' => 5,
             'comment' => 'テストレビュー',
         ]);
 
-        $response = $this->get('/reviews/' . $review->id . '/edit');
+        $response = $this->get('/reviews/'.$review->id.'/edit');
 
         $response->assertRedirect('/login');
     }
@@ -210,14 +212,14 @@ class PageAccessTest extends TestCase
             'image_url' => null,
         ]);
 
-        $review = \App\Models\Review::create([
+        $review = Review::create([
             'user_id' => $user->id,
             'book_id' => $book->id,
             'rating' => 5,
             'comment' => 'テストレビュー',
         ]);
 
-        $response = $this->delete('/reviews/' . $review->id);
+        $response = $this->delete('/reviews/'.$review->id);
 
         $response->assertRedirect('/login');
     }
@@ -263,9 +265,9 @@ class PageAccessTest extends TestCase
         for ($i = 1; $i <= 11; $i++) {
             $book = Book::create([
                 'user_id' => $user->id,
-                'title' => 'テスト書籍' . $i,
-                'author' => 'テスト著者' . $i,
-                'isbn' => '97840000000' . str_pad((string) $i, 2, '0', STR_PAD_LEFT),
+                'title' => 'テスト書籍'.$i,
+                'author' => 'テスト著者'.$i,
+                'isbn' => '97840000000'.str_pad((string) $i, 2, '0', STR_PAD_LEFT),
                 'published_date' => '2026-01-01',
                 'description' => null,
                 'image_url' => null,
@@ -304,15 +306,15 @@ class PageAccessTest extends TestCase
         for ($i = 1; $i <= 11; $i++) {
             $book = Book::create([
                 'user_id' => $user->id,
-                'title' => 'お気に入り書籍' . $i,
-                'author' => 'テスト著者' . $i,
-                'isbn' => '97840000001' . str_pad((string) $i, 2, '0', STR_PAD_LEFT),
+                'title' => 'お気に入り書籍'.$i,
+                'author' => 'テスト著者'.$i,
+                'isbn' => '97840000001'.str_pad((string) $i, 2, '0', STR_PAD_LEFT),
                 'published_date' => '2026-01-01',
                 'description' => null,
                 'image_url' => null,
             ]);
 
-            \App\Models\Favorite::create([
+            Favorite::create([
                 'user_id' => $user->id,
                 'book_id' => $book->id,
             ]);
@@ -352,9 +354,9 @@ class PageAccessTest extends TestCase
         for ($i = 1; $i <= 11; $i++) {
             $book = Book::create([
                 'user_id' => $user->id,
-                'title' => 'ジャンル書籍' . $i,
-                'author' => 'テスト著者' . $i,
-                'isbn' => '97840000002' . str_pad((string) $i, 2, '0', STR_PAD_LEFT),
+                'title' => 'ジャンル書籍'.$i,
+                'author' => 'テスト著者'.$i,
+                'isbn' => '97840000002'.str_pad((string) $i, 2, '0', STR_PAD_LEFT),
                 'published_date' => '2026-01-01',
                 'description' => null,
                 'image_url' => null,
@@ -363,7 +365,7 @@ class PageAccessTest extends TestCase
             $book->genres()->attach($genre->id);
         }
 
-        $response = $this->actingAs($user)->get('/genres/' . $genre->id);
+        $response = $this->actingAs($user)->get('/genres/'.$genre->id);
 
         $response->assertStatus(200);
         $response->assertViewHas('books', function ($books) {
@@ -374,7 +376,7 @@ class PageAccessTest extends TestCase
         });
 
         $response = $this->actingAs($user)->get(
-            '/genres/' . $genre->id . '?page=2'
+            '/genres/'.$genre->id.'?page=2'
         );
 
         $response->assertStatus(200);

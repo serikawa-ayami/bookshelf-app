@@ -15,17 +15,17 @@ class UpdateGenreValidationTest extends TestCase
     private function validate(Genre $genre, array $data): bool
     {
         $request = UpdateGenreRequest::create(
-            '/genres/' . $genre->id,
+            '/genres/'.$genre->id,
             'PUT',
             $data
         );
 
         $request->setRouteResolver(function () use ($genre) {
-            return new class ($genre) {
+            return new class($genre)
+            {
                 public function __construct(
-                private Genre $genre
-                ) {
-                }
+                    private Genre $genre
+                ) {}
 
                 public function parameter($key = null, $default = null)
                 {

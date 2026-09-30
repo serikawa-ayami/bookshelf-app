@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBookRequest extends FormRequest
@@ -17,7 +18,7 @@ class StoreBookRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -32,6 +33,7 @@ class StoreBookRequest extends FormRequest
             'genres.*' => ['exists:genres,id'],
         ];
     }
+
     public function messages(): array
     {
         return [
@@ -60,7 +62,6 @@ class StoreBookRequest extends FormRequest
             'genres.array' => 'ジャンルの形式が正しくありません。',
             'genres.min' => 'ジャンルを1つ以上選択してください。',
             'genres.*.exists' => '選択したジャンルが存在しません。',
-
 
         ];
     }

@@ -202,8 +202,6 @@ class BookUpdateApiTest extends TestCase
             'ジャンルは必須です。'
         );
 
-
-
         // 書籍情報が更新されていないことを確認する
         $this->assertDatabaseHas('books', [
             'id' => $book->id,
