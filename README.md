@@ -104,9 +104,21 @@ docker run --rm \
 
 sailコマンドを使用できるようにエイリアスを設定します。
 
+使用しているシェルの設定ファイルに追記してください（シェルは`echo $SHELL`で確認できます）。
+
+bashの場合：
+
+```bash
+echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" >> ~/.bashrc
+```
+
+zshの場合：
+
 ```bash
 echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" >> ~/.zshrc
 ```
+
+※ 実行するたびに同じ行が追記されるため、1回だけ実行してください。
 
 シェルを再起動してエイリアスを有効にします。
 
