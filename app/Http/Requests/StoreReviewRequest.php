@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreReviewRequest extends FormRequest
+class StoreReviewRequest extends LocalizedFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,18 +25,6 @@ class StoreReviewRequest extends FormRequest
         return [
             'rating' => ['required', 'integer', 'between:1,5'],
             'comment' => ['nullable', 'string', 'max:255'],
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'rating.required' => '評価は必須です。',
-            'rating.integer' => '評価は整数で入力してください。',
-            'rating.between' => '評価は1〜5の範囲で入力してください。',
-            'comment.string' => 'コメントは文字列で入力してください。',
-            'comment.max' => 'コメントは255文字以内で入力してください。',
-
         ];
     }
 }

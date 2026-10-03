@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateGenreRequest extends FormRequest
+class UpdateGenreRequest extends LocalizedFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,18 +27,8 @@ class UpdateGenreRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                'unique:genres,name,'.$this->genre->id,
+                'unique:genres,name,' . $this->genre->id,
             ],
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'name.required' => 'ジャンル名は必須です。',
-            'name.string' => 'ジャンル名は文字列で入力してください。',
-            'name.max' => 'ジャンル名は255文字以内で入力してください。',
-            'name.unique' => 'このジャンル名はすでに登録されています。',
         ];
     }
 }
