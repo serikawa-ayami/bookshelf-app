@@ -1,66 +1,251 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# BookShelf 書籍レビューアプリ
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 概要
 
-## About Laravel
+書籍の登録・編集・削除、レビュー投稿、お気に入り登録、レビューへのいいね、ジャンル管理、ランキング表示などの機能を実装した書籍レビューアプリです。
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+一般ユーザーは書籍の一覧・詳細を閲覧でき、ログイン後は書籍の登録・編集・削除、レビューの投稿・編集・削除、お気に入り登録、レビューへのいいねなどを利用できます。
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+また、外部アプリケーションから利用できる公開APIを実装しています。
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 作成者
 
-## Learning Laravel
+芹川 綾美
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 使用技術
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- PHP 8.5
+- Laravel 10.x
+- MySQL 8.4
+- Docker
+- Docker Compose
+- Laravel Sail
+- phpMyAdmin
+- Vite
+- Tailwind CSS ^3.4.0
+- @tailwindcss/forms
+- Laravel Fortify
+- Laravel Sanctum
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## ER図
 
-## Laravel Sponsors
+![ER図](./docs/ER.drawio.png)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 開発環境URL
 
-### Premium Partners
+http://localhost
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+phpMyAdmin：
 
-## Contributing
+http://localhost:8080
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 動作環境
 
-## Code of Conduct
+- Docker
+- Docker Compose
+- Laravel Sail
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Windows環境ではWSL2を利用してDocker Desktopを使用してください。
 
-## Security Vulnerabilities
+## 環境構築手順
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 1. リポジトリをクローン
 
-## License
+以下のコマンドを実行して、リポジトリをクローンします。
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+git clone https://github.com/serikawa-ayami/bookshelf-app.git
+cd bookshelf-app
+```
+
+### 2. `.env`ファイルを作成
+
+`.env.example`をコピーして`.env`を作成します。
+
+```bash
+cp .env.example .env
+```
+
+`.env`のデータベース接続情報を以下のように設定します。
+
+```ini
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=sail
+DB_PASSWORD=password
+```
+
+### 3. Composer依存パッケージをインストール
+
+初回セットアップ時は`vendor`ディレクトリが存在しないため、まだSailコマンドを使用できません。
+
+Docker上のComposerを使用して依存パッケージをインストールします。
+
+```bash
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php82-composer:latest \
+    composer install --ignore-platform-reqs
+```
+
+`vendor`ディレクトリが作成されたことを確認します。
+
+### 4. Laravel Sailの起動
+
+以下のコマンドでDockerコンテナを起動します。
+
+```bash
+./vendor/bin/sail up -d
+```
+
+sailコマンドを使用できるようにエイリアスを設定します。
+
+```bash
+echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" >> ~/.zshrc
+```
+
+シェルを再起動してエイリアスを有効にします。
+
+```bash
+exec $SHELL
+```
+
+以降の手順では`sail`コマンドを使用します。
+
+### 5. アプリケーションキーを生成
+
+以下のコマンドを実行します。
+
+```bash
+sail artisan key:generate
+```
+
+### 6. データベースのマイグレーションと初期データ投入
+
+以下のコマンドでテーブルを作成し、Seederによる初期データを投入します。
+
+```bash
+sail artisan migrate --seed
+```
+
+データベースを初期状態から作り直す場合は、以下を実行します。
+
+```bash
+sail artisan migrate:fresh --seed
+```
+
+データベース接続エラーなどが発生し、既存のMySQLコンテナやデータボリュームが原因と考えられる場合は、以下を順番に実行してください。
+
+```bash
+sail down -v
+sail up -d
+sail artisan migrate:fresh --seed
+```
+
+`-v`を付けた`down`は、Dockerボリュームも削除してデータベースを初期化します。
+
+### 7. フロントエンドの依存パッケージをインストール
+
+以下のコマンドを実行します。
+
+```bash
+sail npm install
+```
+
+### 8. Viteを起動
+
+以下のコマンドを実行します。
+
+```bash
+sail npm run dev
+```
+
+### 9. アプリケーションにアクセス
+
+ブラウザで以下のURLにアクセスします。
+
+http://localhost
+
+phpMyAdminを使用する場合は、以下のURLにアクセスします。
+
+http://localhost:8080
+
+## テスト実行
+
+テストを実行する場合は、以下のコマンドを使用します。
+
+    sail artisan test
+
+カバレッジ付きで実行する場合は、以下のコマンドを使用します。
+
+    sail artisan test --coverage
+
+## 機能一覧
+
+### 認証機能
+
+- ユーザー登録
+- ログイン・ログアウト
+- 認証・未認証ユーザーに応じたアクセス制御
+
+### 書籍機能
+
+- 書籍一覧表示
+- 書籍詳細表示
+- 書籍登録・編集・削除
+- キーワード検索
+- ジャンルによる絞り込み
+- 登録日・タイトル・評価による並び替え
+- ページネーション
+
+### レビュー機能
+
+- レビュー投稿
+- レビュー編集・削除
+- レビュー評価・コメントの管理
+
+### お気に入り機能
+
+- 書籍のお気に入り登録・解除
+- お気に入り書籍一覧表示
+
+### いいね機能
+
+- レビューへのいいね・解除
+- レビューごとのいいね数表示
+
+### ジャンル管理機能
+
+- ジャンル一覧表示
+- ジャンル詳細表示
+- ジャンル登録・編集・削除
+- ジャンルごとの書籍数表示
+
+### ランキング機能
+
+- レビュー平均評価による書籍ランキング表示
+
+### 公開API
+
+- 書籍一覧取得
+- 書籍詳細取得
+- 書籍登録
+- 書籍更新
+- 書籍削除
+- 書籍一覧の検索・絞り込み・ページネーション
+
+## APIエンドポイント一覧
+
+公開APIは`/api/v1`配下に定義しています。
+
+| HTTPメソッド | URI                    | 概要           |
+| ------------ | ---------------------- | -------------- |
+| GET          | `/api/v1/books`        | 書籍一覧を取得 |
+| GET          | `/api/v1/books/{book}` | 書籍詳細を取得 |
+| POST         | `/api/v1/books`        | 書籍を登録     |
+| PUT          | `/api/v1/books/{book}` | 書籍を更新     |
+| DELETE       | `/api/v1/books/{book}` | 書籍を削除     |
