@@ -14,7 +14,7 @@ abstract class LocalizedFormRequest extends FormRequest
         $fileName = str_replace('Request', '', class_basename($this));
         $path = base_path("lang/ja/{$fileName}.php");
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             return [];
         }
 

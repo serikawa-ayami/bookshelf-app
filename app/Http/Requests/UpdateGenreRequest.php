@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateGenreRequest extends LocalizedFormRequest
 {
@@ -27,7 +26,7 @@ class UpdateGenreRequest extends LocalizedFormRequest
                 'required',
                 'string',
                 'max:255',
-                'unique:genres,name,' . $this->genre->id,
+                'unique:genres,name,'.$this->genre->id,
             ],
         ];
     }

@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Contracts\Validation\ValidationRule;
-use App\Http\Requests\Api\V1\LocalizedFormRequest;
 
 class UpdateBookRequest extends LocalizedFormRequest
 {
@@ -38,5 +37,4 @@ class UpdateBookRequest extends LocalizedFormRequest
             'genres.*' => ['exists:genres,id'],
         ];
     }
-
 }

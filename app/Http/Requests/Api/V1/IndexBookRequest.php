@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Contracts\Validation\ValidationRule;
-use App\Http\Requests\Api\V1\LocalizedFormRequest;
 
 class IndexBookRequest extends LocalizedFormRequest
 {
@@ -29,5 +28,4 @@ class IndexBookRequest extends LocalizedFormRequest
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ];
     }
-
 }

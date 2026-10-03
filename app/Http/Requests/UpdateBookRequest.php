@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBookRequest extends LocalizedFormRequest
 {
@@ -31,7 +30,7 @@ class UpdateBookRequest extends LocalizedFormRequest
                 'required',
                 'string',
                 'digits:13',
-                'unique:books,isbn,' . $this->book->id,
+                'unique:books,isbn,'.$this->book->id,
             ],
             'published_date' => ['required', 'date'],
             'description' => ['nullable', 'string', 'max:1000'],
